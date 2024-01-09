@@ -5,5 +5,6 @@ g++ -c -I/opt/homebrew/Cellar/thrift/0.19.0/include -std=c++11 main.cpp
 
 link in local 
 
-g++ *.o -o main -L/opt/homebrew/Cellar/thrift/0.19.0/lib -lthrift
+g++ *.o -o main -L/opt/homebrew/Cellar/thrift/0.19.0/lib -lthrift -pthread
+
 
