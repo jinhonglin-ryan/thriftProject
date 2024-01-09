@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
   ::std::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
   ::std::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
-  cout << "lol" << endl;
+  cout << "Start Match Server" << endl;
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
    server.serve();
   return 0;
