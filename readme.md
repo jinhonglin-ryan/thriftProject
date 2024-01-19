@@ -66,4 +66,3 @@ This project consists of a matchmaking system implemented in C++ and a correspon
 - Ensure you have necessary dependencies installed, including Thrift for code generation.
 - Refer to individual `guide.txt` files or documentation within each component for more detailed instructions.
 
-Feel free to customize this readme based on specific details about the functionalities, dependencies, and instructions for your matchmaking system.
