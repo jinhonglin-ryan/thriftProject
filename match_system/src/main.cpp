@@ -37,7 +37,7 @@ struct MessageQueue {
     queue<Task> q;
     mutex m;
     condition_variable cv;
-}message_queue;
+} message_queue;
 
 
 class Pool {
@@ -75,11 +75,11 @@ class Pool {
                 // sort first, based on scores
                 sort(users.begin(), users.end(), [&] (User& a, User& b) {
                     return a.score < b.score;
-                })
+                });
 
                 bool flag = true; // avoid infinite loop
 
-                for (unint_32 i = 1; i < users.size(), i++) {
+                for (uint32_t i = 1; i < users.size(); i++) {
                     auto a = users[i - 1];
                     auto b = users[i];
 
@@ -90,13 +90,12 @@ class Pool {
                         flag = false;
                         break;
                     }
-
-                    if (flag) {
-                        break;
-                    }
                 }
 
+                if (flag) break;
 
+
+           }
         }
         void add(User user) {
             users.push_back(user);
@@ -114,7 +113,7 @@ class Pool {
     private:
         vector<User> users;
 
-}pool;
+} pool;
 
 
 class MatchHandler : virtual public MatchIf {
