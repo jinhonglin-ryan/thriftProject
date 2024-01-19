@@ -16,17 +16,17 @@
 #include <condition_variable>
 #include <queue>
 #include <vector>
+#include <unistd.h>
 
 
-using namespace std;
 
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
-using namespace  ::match_service;
+using namespace ::match_service;
 using namespace ::save_service;
-
+using namespace std;
 
 struct Task {
     User user;
@@ -67,21 +67,35 @@ class Pool {
         }
 
 
-        
+
 
         void match() {
             while (users.size() > 1) {
-                auto a = users[0];
-                auto b = users[1];
-                // remove user a and user b
-                users.erase(users.begin());
-                users.erase(users.begin());
+                // only match two players with a difference of 50 in their scores
+                // sort first, based on scores
+                sort(users.begin(), users.end(), [&] (User& a, User& b) {
+                    return a.score < b.score;
+                })
 
+                bool flag = true; // avoid infinite loop
 
-                // save result
-                save_result(a.id, b.id);
+                for (unint_32 i = 1; i < users.size(), i++) {
+                    auto a = users[i - 1];
+                    auto b = users[i];
 
-            }
+                    if (b.score - a.score <= 50) { // if their scores are differed within 50
+                        users.erase(users.begin() + i - 1, users.begin() + i + 1);
+                        save_result(a.id, b.id);
+
+                        flag = false;
+                        break;
+                    }
+
+                    if (flag) {
+                        break;
+                    }
+                }
+
 
         }
         void add(User user) {
@@ -154,9 +168,15 @@ void consume_task() {
 
     while (true) { // check if currently two players are matched
         unique_lock<mutex> lck(message_queue.m);
+
         if (message_queue.q.empty()) { // avoid infinite loop, taking up too much CPU usage, need to wait
-            message_queue.cv.wait(lck);
-        } else {
+            // message_queue.cv.wait(lck);
+            lck.unlock();
+            pool.match();
+            sleep(1); // match every second
+        }
+
+        else {
             auto task = message_queue.q.front();
             message_queue.q.pop(); // finish operation on message_queue, need to unlock
             lck.unlock();
@@ -185,7 +205,7 @@ int main(int argc, char **argv) {
 
 
   cout << "Start Match Server" << endl;
-  thread matching_thread(consume_task);
+  std::thread matching_thread(consume_task);
 
 
 
