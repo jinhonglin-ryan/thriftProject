@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
 
 
   cout << "Start Match Server" << endl;
-  std::thread matching_thread(consume_task);
+  thread matching_thread(consume_task);
 
 
 
